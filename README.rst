@@ -19,6 +19,23 @@ Usage
     tutor plugins enable arm64
 
 
+Publishing new images to Docker Hub
+-----------------------------------
+
+Users of this plugin should not need to do this; this is more a "note to self"
+for this plugin's maintainer.
+
+To build and publish new images::
+
+    git checkout nightly
+    git pull
+    tutor images build openedx --no-cache
+    tutor images push openedx
+    git checkout master
+    git pull
+    tutor images build openedx --no-cache
+    tutor images push openedx
+
 License
 -------
 
