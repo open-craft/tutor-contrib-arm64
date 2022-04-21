@@ -3,51 +3,32 @@ import os
 import pkg_resources
 
 from tutor import hooks
+from tutor.__about__ import __version_suffix__ as tutor_version_suffix
 
 from .__about__ import __version__
 
+# We currently do not have a CI pipeline set up to build an ARM image for every
+# new Tutor release automatically, so for now we have to settle for grabbing the
+# latest image of the right type (either nightly or regular)
+DOCKER_IMAGE_TAG = tutor_version_suffix or "latest"
 
 ################# Configuration
 config = {
-    # Add here your new settings
     "defaults": {
         "VERSION": __version__,
     },
-    # Add here settings that don't have a reasonable default for all users. For
-    # instance: passwords, secret keys, etc.
     "unique": {
-        # "SECRET_KEY": "\{\{ 24|random_string \}\}",
     },
-    # Danger zone! Add here values to override settings from Tutor core or other plugins.
+    # Danger zone! Values here will override settings from Tutor core or other plugins.
     "overrides": {
-        # "PLATFORM_NAME": "My platform",
+        # The default MySQL 5.7 doesn't have an ARM image, so we need to use v8
+        # An alternative would be "mariadb:10.4" which also has ARM support.
+        "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle",
+        # The official overhang.io docker repo doesn't have arm64 images so we
+        # need to use a separate repo that's related to this plugin, which does:
+        "DOCKER_IMAGE_OPENEDX": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
     },
 }
-
-################# Initialization tasks
-# To run the script from templates/arm64/tasks/myservice/init, add:
-# hooks.Filters.COMMANDS_INIT.add_item((
-#     "myservice",
-#     ("arm64", "tasks", "myservice", "init"),
-# ))
-
-################# Docker image management
-# To build an image with `tutor images build myimage`, add a Dockerfile to templates/arm64/build/myimage and write:
-# hooks.Filters.IMAGES_BUILD.add_item((
-#     "myimage",
-#     ("plugins", "arm64", "build", "myimage"),
-#     "docker.io/myimage:\{\{ ARM64_VERSION \}\}",
-#     (),
-# )
-# To pull/push an image with `tutor images pull myimage` and `tutor images push myimage`, write:
-# hooks.Filters.IMAGES_PULL.add_item((
-#     "myimage",
-#     "docker.io/myimage:\{\{ ARM64_VERSION \}\}",
-# )
-# hooks.Filters.IMAGES_PUSH.add_item((
-#     "myimage",
-#     "docker.io/myimage:\{\{ ARM64_VERSION \}\}",
-# )
 
 
 ################# You don't really have to bother about what's below this line,
