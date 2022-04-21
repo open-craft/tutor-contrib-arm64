@@ -1,0 +1,2 @@
+recursive-include tutor_arm64/patches *
+recursive-include tutor_arm64/templates *
