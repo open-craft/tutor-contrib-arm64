@@ -17,6 +17,7 @@ Usage
 ::
 
     tutor plugins enable arm64
+    tutor local quickstart
 
 
 Publishing new images to Docker Hub
@@ -30,11 +31,11 @@ To build and publish new images::
     git checkout nightly
     git pull
     tutor images build openedx --no-cache
+    tutor images build permissions --no-cache
     tutor images push openedx
-    git checkout master
-    git pull
-    tutor images build openedx --no-cache
-    tutor images push openedx
+    tutor images push permissions
+
+Then ``git checkout master`` and run the same commands again.
 
 License
 -------
