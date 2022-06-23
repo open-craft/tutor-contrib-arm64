@@ -22,11 +22,14 @@ config = {
     # Danger zone! Values here will override settings from Tutor core or other plugins.
     "overrides": {
         # The default MySQL 5.7 doesn't have an ARM image, so we need to use MySQL 8.
-        # For Maple and earlier, MySQL 8 won't work so we use "mariadb:10.4" which also has ARM support.
-        "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle" if tutor_version_suffix == "nightly" else "mariadb:10.4",
+        # Note: For Maple and earlier, MySQL 8 won't work so "mariadb:10.4" can be used; it also has ARM support.
+        # If you are upgrading from a previous version of this plugin which used mariadb, you may need to override this
+        # setting to use "mariadb:10.4" so that you'll still have the same MySQL data.
+        "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle",
         # The official overhang.io docker repo doesn't have arm64 images so we
         # need to use a separate repo that's related to this plugin, which does:
         "DOCKER_IMAGE_OPENEDX": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
+        "DOCKER_IMAGE_OPENEDX_DEV": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
         "DOCKER_IMAGE_PERMISSIONS": "docker.io/opencraft/openedx-permissions-arm64:" + DOCKER_IMAGE_TAG,
     },
 }
