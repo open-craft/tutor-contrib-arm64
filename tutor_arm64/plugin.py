@@ -29,7 +29,7 @@ config = {
         # The official overhang.io docker repo doesn't have arm64 images so we
         # need to use a separate repo that's related to this plugin, which does:
         "DOCKER_IMAGE_OPENEDX": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
-        "DOCKER_IMAGE_OPENEDX_DEV": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
+        "DOCKER_IMAGE_OPENEDX_DEV": "docker.io/opencraft/openedx-arm64-dev:" + DOCKER_IMAGE_TAG,
         "DOCKER_IMAGE_PERMISSIONS": "docker.io/opencraft/openedx-permissions-arm64:" + DOCKER_IMAGE_TAG,
     },
 }
