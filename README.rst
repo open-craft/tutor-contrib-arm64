@@ -19,12 +19,18 @@ Usage
     tutor plugins enable arm64
     tutor local quickstart
 
+Images Used
+-----------
+
+Note: this plugin uses `unofficial Tutor images <https://hub.docker.com/r/opencraft/openedx-arm64/tags>`_ instead of the
+latest, official docker images from Tutor. These images should be identical to the official ones other than being built
+for ARM64; however, they are not updated as frequently.
+
 
 Publishing new images to Docker Hub
 -----------------------------------
 
-Users of this plugin should not need to do this; this is more a "note to self"
-for this plugin's maintainer.
+Users of this plugin should not need to do this; this is more a "note to self" for this plugin's maintainer.
 
 To build and publish new images::
 
