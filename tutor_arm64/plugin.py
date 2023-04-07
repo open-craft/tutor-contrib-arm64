@@ -33,7 +33,13 @@ config = {
 def modify_build_command(cmd_args: list[str]):
     """ Replace 'build' with 'buildx build'"""
     # cmd_args is e.g. ["build", "-t", "(tag)", ...]
-    return ["buildx"] + cmd_args + ["--load"]
+    # There is no way to inspect the tutor config here ? So use an env variable.
+    # We want to modify DOCKER_BUILD_COMMAND for automated builds on GitHub but
+    # not for local builds on a developer's machine, which should work the same
+    # way as normal.
+    if os.environ.get("TUTOR_ARM64_FORCE_BUILDX_ARM64"):
+        return ["buildx"] + cmd_args + ["--load", "--platform=linux/arm64/v8"]
+    return cmd_args
 
 
 ################# You don't really have to bother about what's below this line,

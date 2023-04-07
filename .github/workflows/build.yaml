@@ -29,9 +29,9 @@ jobs:
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       # - name: Build openedx image
-      #   run: tutor images build openedx
+      #   run: TUTOR_ARM64_FORCE_BUILDX_ARM64=true tutor images build openedx
       - name: Build openedx-permissions image
-        run: tutor images build permissions
+        run: TUTOR_ARM64_FORCE_BUILDX_ARM64=true tutor images build permissions
       # - name: Push openedx image
       #   run: tutor images push openedx
       - name: Push openedx-permissions image
