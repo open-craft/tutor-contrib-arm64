@@ -29,6 +29,13 @@ config = {
 }
 
 
+@hooks.Filters.DOCKER_BUILD_COMMAND.add()
+def modify_build_command(cmd_args: list[str]):
+    """ Replace 'build' with 'buildx build'"""
+    # cmd_args is e.g. ["build", "-t", "(tag)", ...]
+    return ["buildx"] + cmd_args
+
+
 ################# You don't really have to bother about what's below this line,
 ################# except maybe for educational purposes :)
 
