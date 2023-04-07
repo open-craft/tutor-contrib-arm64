@@ -10,6 +10,9 @@ on:
 jobs:
   build-openedx-images:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tutor_version: [master, nightly]
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU for cross-platform builds
@@ -18,8 +21,10 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/arm64/v8
+      - name: Check out Tutor
+        run: git clone --branch ${{ matrix.tutor_version }} https://github.com/overhangio/tutor
       - name: Install tutor
-        run: pip install tutor
+        run: pip install -e ./tutor
       - name: Install this ARM64 plugin
         run: pip install -e .
       - name: Enable this ARM64 plugin
