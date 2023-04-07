@@ -1,0 +1,27 @@
+name: Build ARM64 Tutor Docker images
+
+on:
+  push:
+    branches: [ main ]
+  # Run on all pull requests against the main branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-openedx-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU for cross-platform builds
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/arm64/v8
+      - name: Install tutor
+        run: pip install tutor
+      - name: Generate Tutor Config
+        run: tutor config save
+      - name: Build openedx image
+        run: tutor images build openedx
+      - name: Build openedx-permissions image
+        run: tutor images build permissions
