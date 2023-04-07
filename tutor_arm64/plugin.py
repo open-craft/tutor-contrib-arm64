@@ -3,14 +3,8 @@ import os
 import pkg_resources
 
 from tutor import hooks
-from tutor.__about__ import __version_suffix__ as tutor_version_suffix
 
 from .__about__ import __version__
-
-# We currently do not have a CI pipeline set up to build an ARM image for every
-# new Tutor release automatically, so for now we have to settle for grabbing the
-# latest image of the right type (either nightly or regular)
-DOCKER_IMAGE_TAG = tutor_version_suffix or "latest"
 
 ################# Configuration
 config = {
@@ -28,9 +22,9 @@ config = {
         "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle",
         # The official overhang.io docker repo doesn't have arm64 images so we
         # need to use a separate repo that's related to this plugin, which does:
-        "DOCKER_IMAGE_OPENEDX": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
-        "DOCKER_IMAGE_OPENEDX_DEV": "docker.io/opencraft/openedx-arm64-dev:" + DOCKER_IMAGE_TAG,
-        "DOCKER_IMAGE_PERMISSIONS": "docker.io/opencraft/openedx-permissions-arm64:" + DOCKER_IMAGE_TAG,
+        "DOCKER_IMAGE_OPENEDX": "ghcr.io/open-craft/openedx-arm64:{{ TUTOR_VERSION }}",
+        "DOCKER_IMAGE_OPENEDX_DEV": "ghcr.io/open-craft/openedx-arm64-dev:{{ TUTOR_VERSION }}",
+        "DOCKER_IMAGE_PERMISSIONS": "ghcr.io/open-craft/openedx-permissions-arm64:{{ TUTOR_VERSION }}",
     },
 }
 

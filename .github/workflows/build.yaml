@@ -11,6 +11,7 @@ jobs:
   build-openedx-images:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set up QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -19,9 +20,19 @@ jobs:
           platforms: linux/arm64/v8
       - name: Install tutor
         run: pip install tutor
+      - name: Install this ARM64 plugin
+        run: pip install -e .
+      - name: Enable this ARM64 plugin
+        run: tutor plugins enable arm64
       - name: Generate Tutor Config
         run: tutor config save
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Build openedx image
         run: tutor images build openedx
       - name: Build openedx-permissions image
         run: tutor images build permissions
+      - name: Push openedx image
+        run: tutor images push openedx
+      - name: Push openedx-permissions image
+        run: tutor images push permissions
