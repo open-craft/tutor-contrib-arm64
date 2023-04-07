@@ -33,7 +33,7 @@ config = {
 def modify_build_command(cmd_args: list[str]):
     """ Replace 'build' with 'buildx build'"""
     # cmd_args is e.g. ["build", "-t", "(tag)", ...]
-    return ["buildx"] + cmd_args
+    return ["buildx"] + cmd_args + ["--load"]
 
 
 ################# You don't really have to bother about what's below this line,
