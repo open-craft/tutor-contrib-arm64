@@ -19,7 +19,7 @@ config = {
         # Note: For Maple and earlier, MySQL 8 won't work so "mariadb:10.4" can be used; it also has ARM support.
         # If you are upgrading from a previous version of this plugin which used mariadb, you may need to override this
         # setting to use "mariadb:10.4" so that you'll still have the same MySQL data.
-        "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle",
+        "DOCKER_IMAGE_MYSQL": "docker.io/mysql:8.0",
         # The official overhang.io docker repo doesn't have arm64 images so we
         # need to use a separate repo that's related to this plugin, which does:
         "DOCKER_IMAGE_OPENEDX": "ghcr.io/open-craft/openedx-arm64:{{ TUTOR_VERSION }}",
