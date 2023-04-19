@@ -3,14 +3,8 @@ import os
 import pkg_resources
 
 from tutor import hooks
-from tutor.__about__ import __version_suffix__ as tutor_version_suffix
 
 from .__about__ import __version__
-
-# We currently do not have a CI pipeline set up to build an ARM image for every
-# new Tutor release automatically, so for now we have to settle for grabbing the
-# latest image of the right type (either nightly or regular)
-DOCKER_IMAGE_TAG = tutor_version_suffix or "latest"
 
 ################# Configuration
 config = {
@@ -25,14 +19,27 @@ config = {
         # Note: For Maple and earlier, MySQL 8 won't work so "mariadb:10.4" can be used; it also has ARM support.
         # If you are upgrading from a previous version of this plugin which used mariadb, you may need to override this
         # setting to use "mariadb:10.4" so that you'll still have the same MySQL data.
-        "DOCKER_IMAGE_MYSQL": "mysql:8.0-oracle",
+        "DOCKER_IMAGE_MYSQL": "docker.io/mysql:8.0",
         # The official overhang.io docker repo doesn't have arm64 images so we
         # need to use a separate repo that's related to this plugin, which does:
-        "DOCKER_IMAGE_OPENEDX": "docker.io/opencraft/openedx-arm64:" + DOCKER_IMAGE_TAG,
-        "DOCKER_IMAGE_OPENEDX_DEV": "docker.io/opencraft/openedx-arm64-dev:" + DOCKER_IMAGE_TAG,
-        "DOCKER_IMAGE_PERMISSIONS": "docker.io/opencraft/openedx-permissions-arm64:" + DOCKER_IMAGE_TAG,
+        "DOCKER_IMAGE_OPENEDX": "ghcr.io/open-craft/openedx-arm64:{{ TUTOR_VERSION }}",
+        "DOCKER_IMAGE_OPENEDX_DEV": "ghcr.io/open-craft/openedx-arm64-dev:{{ TUTOR_VERSION }}",
+        "DOCKER_IMAGE_PERMISSIONS": "ghcr.io/open-craft/openedx-permissions-arm64:{{ TUTOR_VERSION }}",
     },
 }
+
+
+@hooks.Filters.DOCKER_BUILD_COMMAND.add()
+def modify_build_command(cmd_args: list[str]):
+    """ Replace 'build' with 'buildx build'"""
+    # cmd_args is e.g. ["build", "-t", "(tag)", ...]
+    # There is no way to inspect the tutor config here ? So use an env variable.
+    # We want to modify DOCKER_BUILD_COMMAND for automated builds on GitHub but
+    # not for local builds on a developer's machine, which should work the same
+    # way as normal.
+    if os.environ.get("TUTOR_ARM64_FORCE_BUILDX_ARM64"):
+        return ["buildx"] + cmd_args + ["--load", "--platform=linux/arm64/v8"]
+    return cmd_args
 
 
 ################# You don't really have to bother about what's below this line,

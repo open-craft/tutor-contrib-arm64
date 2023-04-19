@@ -1,0 +1,48 @@
+name: Build ARM64 Tutor Docker images
+
+on:
+  # Run every day:
+  schedule:
+  - cron: "0 0 * * *"
+  # Run on all pull requests against the main branch
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-openedx-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tutor_version: [master, nightly]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up QEMU for cross-platform builds
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          # This doesn't seem to have any effect but we may as well specify it.
+          platforms: linux/arm64/v8
+          # (What _does_ have effect is passing --platform in the build command,
+          # which this plugin does using a filter if the environment variable
+          # TUTOR_ARM64_FORCE_BUILDX_ARM64 is set.)
+      - name: Check out Tutor
+        run: git clone --branch ${{ matrix.tutor_version }} https://github.com/overhangio/tutor
+      - name: Install tutor
+        run: pip install -e ./tutor
+      - name: Install this ARM64 plugin
+        run: pip install -e .
+      - name: Enable this ARM64 plugin
+        run: tutor plugins enable arm64
+      - name: Generate Tutor Config
+        run: tutor config save
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+      - name: Build openedx image
+        run: TUTOR_ARM64_FORCE_BUILDX_ARM64=true tutor images build openedx
+      - name: Build openedx-permissions image
+        run: TUTOR_ARM64_FORCE_BUILDX_ARM64=true tutor images build permissions
+      - name: Push openedx image
+        run: tutor images push openedx
+      - name: Push openedx-permissions image
+        run: tutor images push permissions
